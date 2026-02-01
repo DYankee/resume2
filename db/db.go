@@ -9,7 +9,7 @@ import (
 )
 
 type DataStore struct {
-	db *sql.DB
+	Db *sql.DB
 }
 
 func NewDataStore(dbName string) (DataStore, error) {
