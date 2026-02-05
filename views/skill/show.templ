@@ -6,11 +6,11 @@ import(
   "github.com/DYankee/resume2/views/layout"
 )
 
-templ Show(skills []services.Skill) {
+templ Skill_Section(skills []services.Skill) {
   <h1>Skill List</h1>
   <section>
     <table class="table table-zebra">
-      <thead>
+      <thead class="p-8">
         <tr>
           <th>#</th>
           <th>Name</th>

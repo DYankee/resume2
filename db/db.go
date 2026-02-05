@@ -39,5 +39,14 @@ func getConnection(dbName string) (*sql.DB, error) {
 
 	log.Println("Connected to database")
 
+	// test query
+	rows, err := db.Query("select * from skills")
+	if err != nil {
+		return nil, fmt.Errorf("failed to access skills table: %v", err)
+	}
+	for rows.Next() {
+		log.Println(rows.Scan())
+	}
+
 	return db, nil
 }

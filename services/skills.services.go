@@ -37,7 +37,14 @@ func (ss *ServicesSkill) GetAllSkills() ([]Skill, error) {
 
 	skills := []Skill{}
 	for rows.Next() {
-		rows.Scan(&ss.Skill)
+		rows.Scan(
+			&ss.Skill.Id,
+			&ss.Skill.Name,
+			&ss.Skill.SkillLvl,
+			&ss.Skill.SkillTypeId,
+			&ss.Skill.Description,
+			&ss.Skill.IsDeleted,
+		)
 		skills = append(skills, ss.Skill)
 	}
 	return skills, nil

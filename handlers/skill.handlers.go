@@ -28,7 +28,7 @@ func (sh *SkillHandler) HandleShowSkills(c echo.Context) error {
 		return err
 	}
 
-	si := skill.ShowIndex("test", skill.Show(skillData))
+	si := skill.ShowIndex("test", skill.Skill_Section(skillData))
 
 	return sh.View(c, si)
 }
