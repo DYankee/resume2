@@ -1,0 +1,21 @@
+package layout
+
+templ Base(title string){
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+    <meta charset="utf-8"/>
+    
+      <link rel="stylesheet" href="/assets/css/output.css">
+
+      <title> {Title} | ZGeary.dev </title>
+      <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+    </head>
+    <body>
+      <main class="">
+        { children... }
+      </main>
+    </body>
+
+  </html>
+}

@@ -10,26 +10,23 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const dbname = "../data.db"
+const dbname = "data.db"
 
 func main() {
 	app := echo.New()
 
-	app.Static("/assets", "../assets")
+	app.Static("/", "assets")
 	app.Use(middleware.Logger())
 
-	app.GET("/", func(c echo.Context) error { return c.Redirect(http.StatusPermanentRedirect, "/skills") })
+	app.GET("/", func(c echo.Context) error { return c.Redirect(http.StatusPermanentRedirect, "/skill") })
 
 	db, err := db.NewDataStore(dbname)
 	if err != nil {
 		app.Logger.Fatal(err)
 	}
 
-	ss := services.NewServicesSkills(services.Skill{}, db)
+	us := services.NewServicesSkills(services.Skill{}, db)
 
-	h := handlers.New(ss)
+	h := handlers.New(us)
 
-	handlers.SetupRoutes(app, h)
-
-	app.Logger.Fatal(app.Start(":8080"))
 }
