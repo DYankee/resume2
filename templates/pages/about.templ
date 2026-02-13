@@ -5,15 +5,25 @@ import (
 	"github.com/DYankee/resume2/models"
 )
 
-templ AboutPage(skills []models.Skill, experiences []models.Experience, education []models.Education) {
+templ AboutPage(
+		skills []models.Skill, 
+		experiences []models.Experience, 
+		education []models.Education,
+		categories []models.Skill_category,
+	) {
 	@Layout("About") {
 		<div id="content">
-			@AboutContent(skills, experiences, education)
+			@AboutContent(skills, experiences, education, categories)
 		</div>
 	}
 }
 
-templ AboutContent(skills []models.Skill, experiences []models.Experience, education []models.Education) {
+templ AboutContent(
+		skills []models.Skill, 
+		experiences []models.Experience, 
+		education []models.Education,
+		categories []models.Skill_category,
+	) {
 	// ---- About Me ----
 	<section class="mx-auto max-w-6xl px-6 py-20">
 		<div class="flex flex-col md:flex-row items-center gap-12">
@@ -40,38 +50,31 @@ templ AboutContent(skills []models.Skill, experiences []models.Experience, educa
 	</section>
 
 	// ---- Skills ----
-	<section class="mx-auto max-w-6xl px-6 py-16" id="skills">
+	<section class="mx-auto max-w-6xl px-6 py-16" id="skills-section">
 		<h2 class="text-3xl font-bold mb-10 text-center">Skills</h2>
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-			// Left: skill list
-			<div class="md:col-span-1 space-y-2 max-h-[500px] overflow-y-auto pr-2">
-				for i, skill := range skills {
-					<button
-						class={
-							"w-full text-left px-4 py-3 rounded-lg transition font-medium",
-							templ.KV("bg-purple-600 text-white", i == 0),
-							templ.KV("bg-gray-800 hover:bg-gray-700 text-gray-300", i != 0),
-						}
-						hx-get={ fmt.Sprintf("/api/skills/%d", skill.ID) }
-						hx-target="#skill-detail"
-						hx-swap="innerHTML"
-						onclick="document.querySelectorAll('#skills button').forEach(b => { b.classList.remove('bg-purple-600','text-white'); b.classList.add('bg-gray-800','hover:bg-gray-700','text-gray-300'); }); this.classList.remove('bg-gray-800','hover:bg-gray-700','text-gray-300'); this.classList.add('bg-purple-600','text-white');"
-					>
-						{ skill.Name }
-					</button>
-				}
-			</div>
-			// Right: skill detail
-			<div
-				class="md:col-span-2 bg-gray-900 rounded-xl p-8 border border-gray-800 min-h-[250px]"
-				id="skill-detail"
+
+		// Category dropdown
+		<div class="mb-6 flex justify-center">
+			<select
+				class="bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition cursor-pointer"
+				hx-get="/api/skills"
+				hx-target="#skills-panel"
+				hx-trigger="change"
+				hx-swap="innerHTML"
+				name="category_id"
 			>
-				if len(skills) > 0 {
-					@SkillDetail(&skills[0])
-				} else {
-					<p class="text-gray-400">No skills to display.</p>
+				<option value="all">All Categories</option>
+				for _, cat := range categories {
+					<option value={ fmt.Sprintf("%d", cat.ID) }>
+						{ cat.Name }
+					</option>
 				}
-			</div>
+			</select>
+		</div>
+
+		// Skills panel (list + detail)
+		<div id="skills-panel">
+			@SkillListWithDetail(skills)
 		</div>
 	</section>
 
@@ -140,26 +143,135 @@ templ AboutContent(skills []models.Skill, experiences []models.Experience, educa
 	</section>
 }
 
-templ SkillDetail(skill *models.Skill) {
-	<div>
-		<h3 class="text-2xl font-bold text-white mb-2">{ skill.Name }</h3>
-		<span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-purple-900 text-purple-300 mb-4">
-			{ skill.Category }
-		</span>
-		<p class="text-gray-300 leading-relaxed mb-6">{ skill.Description }</p>
-		<div>
-			<div class="flex items-center justify-between mb-1">
-				<p class="text-sm text-gray-400">Proficiency</p>
-				<p class="text-sm text-gray-400">
-					{ fmt.Sprintf("%d", skill.Proficiency) }%
+
+
+// SkillListWithDetail renders the left list + right detail together.
+// Returned as a fragment when the category dropdown changes.
+templ SkillListWithDetail(skills []models.Skill) {
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+		// Left: skill list
+		<div class="md:col-span-1 space-y-2 max-h-[500px] overflow-y-auto pr-2" id="skill-list">
+			if len(skills) == 0 {
+				<p class="text-gray-500 text-sm px-4 py-3">
+					No skills in this category.
 				</p>
+			}
+			for i, skill := range skills {
+				<button
+					class={
+						"w-full text-left px-4 py-3 rounded-lg transition font-medium",
+						templ.KV("bg-purple-600 text-white", i == 0),
+						templ.KV("bg-gray-800 hover:bg-gray-700 text-gray-300", i != 0),
+					}
+					hx-get={ fmt.Sprintf("/api/skills/%d", skill.ID) }
+					hx-target="#skill-detail"
+					hx-swap="innerHTML"
+					onclick="document.querySelectorAll('#skill-list button').forEach(b => { b.classList.remove('bg-purple-600','text-white'); b.classList.add('bg-gray-800','hover:bg-gray-700','text-gray-300'); }); this.classList.remove('bg-gray-800','hover:bg-gray-700','text-gray-300'); this.classList.add('bg-purple-600','text-white');"
+				>
+					{ skill.Name }
+				</button>
+			}
+		</div>
+
+		// Right: skill detail + project spotlight
+		<div
+			class="md:col-span-2 bg-gray-900 rounded-xl p-8 border border-gray-800 min-h-[250px]"
+			id="skill-detail"
+		>
+			if len(skills) > 0 {
+				@SkillDetail(&skills[0], nil)
+			} else {
+				<p class="text-gray-400">
+					Select a category with skills to see details.
+				</p>
+			}
+		</div>
+	</div>
+}
+
+templ SkillDetail(skill *models.Skill, project *models.Project) {
+	<div class="flex flex-col lg:flex-row gap-8">
+		// Left: skill info
+		<div class="flex-1">
+			<h3 class="text-2xl font-bold text-white mb-2">
+				{ skill.Name }
+			</h3>
+			<span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-purple-900 text-purple-300 mb-4">
+				{ skill.Category }
+			</span>
+			<p class="text-gray-300 leading-relaxed mb-6">
+				{ skill.Description }
+			</p>
+			<div>
+				<div class="flex items-center justify-between mb-1">
+					<p class="text-sm text-gray-400">Proficiency</p>
+					<p class="text-sm text-gray-400">
+						{ fmt.Sprintf("%d", skill.Proficiency) }%
+					</p>
+				</div>
+				<div class="w-full bg-gray-800 rounded-full h-3">
+					<div
+						class="h-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-300"
+						style={ fmt.Sprintf("width: %d%%", skill.Proficiency) }
+					></div>
+				</div>
 			</div>
-			<div class="w-full bg-gray-800 rounded-full h-3">
-				<div
-					class="h-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-300"
-					style={ fmt.Sprintf("width: %d%%", skill.Proficiency) }
-				></div>
-			</div>
+		</div>
+
+		// Right: project spotlight
+		<div class="lg:w-64 shrink-0">
+			<h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+				Project Spotlight
+			</h4>
+			if project != nil {
+				<div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+					if project.ImageURL != "" {
+						<img
+							src={ project.ImageURL }
+							alt={ project.Title }
+							class="w-full h-28 object-cover"
+						/>
+					} else {
+						<div class="w-full h-28 bg-gradient-to-br from-purple-900/50 to-blue-900/50 flex items-center justify-center">
+							<span class="text-2xl">🚀</span>
+						</div>
+					}
+					<div class="p-3">
+						<h5 class="text-sm font-bold text-white mb-1">
+							{ project.Title }
+						</h5>
+						<p class="text-xs text-gray-400 line-clamp-2 mb-2">
+							{ project.Description }
+						</p>
+						<div class="flex gap-2">
+							if project.RepoURL != "" {
+								<a
+									href={ templ.SafeURL(project.RepoURL) }
+									target="_blank"
+									class="text-xs text-purple-400 hover:text-purple-300 transition"
+								>
+									Source →
+								</a>
+							}
+							if project.LiveURL != "" {
+								<a
+									href={ templ.SafeURL(project.LiveURL) }
+									target="_blank"
+									class="text-xs text-blue-400 hover:text-blue-300 transition"
+								>
+									Demo →
+								</a>
+							}
+						</div>
+					</div>
+				</div>
+			} else {
+				<div class="bg-gray-800 rounded-lg border border-gray-700 p-4">
+					<p class="text-xs text-gray-500 text-center">
+						No projects use this skill yet.
+					</p>
+				</div>
+			}
 		</div>
 	</div>
 }

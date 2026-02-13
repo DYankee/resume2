@@ -31,7 +31,10 @@ func main() {
 	//e.GET("/blog/:slug", blogH.HandleBlogPost)
 
 	// HTMX API endpoints
+	e.GET("/api/skills", aboutH.HandleFilteredSkills)
 	e.GET("/api/skills/:id", aboutH.HandleSkillDetail)
+	e.GET("/api/projects/:id/expand", projectsH.HandleProjectExpand)
+	e.GET("/api/projects/:id/collapse", projectsH.HandleProjectCollapse)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

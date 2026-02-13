@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/DYankee/resume2/models"
@@ -194,7 +195,7 @@ func (db *DB) GetSkillByID(id int64) (*models.Skill, error) {
 	return &s, nil
 }
 
-func (db *DB) GetSkillsByCategory(categoryID int64) ([]models.Skill, error) {
+func (db *DB) GetSkillsByCategoryID(categoryID int64) ([]models.Skill, error) {
 	rows, err := db.Conn.Query(`
 		SELECT s.id, s.name, sc.name, s.description, s.icon_url,
 		       s.proficiency, s.deleted, s.created_at, s.updated_at,
@@ -226,6 +227,14 @@ func (db *DB) GetSkillsByCategory(categoryID int64) ([]models.Skill, error) {
 		skills = append(skills, s)
 	}
 	return skills, nil
+}
+
+func (db *DB) GetRandomProjectForSkill(skillID int64) (*models.Project, error) {
+	projects, err := db.GetProjectsForSkill(skillID)
+	if err != nil || len(projects) == 0 {
+		return nil, err
+	}
+	return &projects[rand.Intn(len(projects))], nil
 }
 
 func (db *DB) CreateSkill(name string, categoryID int64, description, iconURL string, proficiency int8) (int64, error) {

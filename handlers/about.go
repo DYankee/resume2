@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/DYankee/resume2/db"
+	"github.com/DYankee/resume2/models"
 	"github.com/DYankee/resume2/templates/pages"
 	"github.com/labstack/echo/v4"
 )
@@ -27,12 +28,16 @@ func (h *AboutHandler) HandleAboutPage(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Failed to load education")
 	}
+	categories, err := h.DB.GetAllSkillCategories()
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to load categories")
+	}
 
 	if c.Request().Header.Get("HX-Request") == "true" {
-		return pages.AboutContent(skills, experiences, education).
+		return pages.AboutContent(skills, experiences, education, categories).
 			Render(c.Request().Context(), c.Response())
 	}
-	return pages.AboutPage(skills, experiences, education).
+	return pages.AboutPage(skills, experiences, education, categories).
 		Render(c.Request().Context(), c.Response())
 }
 
@@ -45,6 +50,30 @@ func (h *AboutHandler) HandleSkillDetail(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusNotFound, "Skill not found")
 	}
-	return pages.SkillDetail(skill).
+	project, _ := h.DB.GetRandomProjectForSkill(id) // nil is fine
+	return pages.SkillDetail(skill, project).
+		Render(c.Request().Context(), c.Response())
+}
+
+func (h *AboutHandler) HandleFilteredSkills(c echo.Context) error {
+	catIDStr := c.QueryParam("category_id")
+
+	var skills []models.Skill
+	var err error
+
+	if catIDStr == "" || catIDStr == "all" {
+		skills, err = h.DB.GetAllSkills()
+	} else {
+		catID, parseErr := strconv.ParseInt(catIDStr, 10, 64)
+		if parseErr != nil {
+			return c.String(http.StatusBadRequest, "Invalid category ID")
+		}
+		skills, err = h.DB.GetSkillsByCategoryID(catID)
+	}
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to load skills")
+	}
+
+	return pages.SkillListWithDetail(skills).
 		Render(c.Request().Context(), c.Response())
 }
