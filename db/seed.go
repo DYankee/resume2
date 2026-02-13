@@ -11,7 +11,7 @@ func (db *DB) Seed() {
 	log.Println("Seeding database...")
 
 	// Skill categories
-	categories := []string{"Software", "Programming languages", "Frontend", "Backend"}
+	categories := []string{"Software", "Programming Languages", "Frontend", "Backend", "Databases"}
 	catIDs := make(map[string]int64)
 	for _, name := range categories {
 		id, _ := db.CreateSkillCategory(name)
@@ -26,17 +26,17 @@ func (db *DB) Seed() {
 		icon        string
 		proficiency int8
 	}{
-		{"GoLang", "Programming languages", "High level, compiled, general purpose programming language with built in memory management. Has a robust standard library along with an extensive package repository. My goto language for web servers and CLI/TUI applications", "", 60},
-		{"C++", "Programming languages", "High level, compiled, general purpose programming language. Has excellent performance but requires manual memory management. My goto language for games and performance critical code", "", 60},
-		{"Java", "Programming Languages", "High level, compiles to byte code that runs anywhere with a JVM, garbage collected. My goto language for cross platform development", "", 50},
-		{"Python", "Programming Languages", "High level interpreted language, used for scripting, data analysis, and machine learning. My goto language for image processing and machine learning", "", 60},
-		{"Lua", "Programming Languages", "Lightweight general purpose scripting language. Mainly used as an embedded scripting language in applications. The language that started my programming journey programming turtles for the computer craft mod for minecraft. Now my goto language for writing quick scripts", "", 70},
+		{"GoLang", "Programming Languages", "High level, compiled, general purpose programming language with built in memory management. Has a robust standard library along with an extensive package repository. My go to language for web servers and CLI/TUI applications", "", 60},
+		{"C++", "Programming Languages", "High level, compiled, general purpose programming language. Has excellent performance but requires manual memory management. My go to language for games and performance critical code", "", 60},
+		{"Java", "Programming Languages", "High level, compiles to byte code that runs anywhere with a JVM, garbage collected. My go to language for cross platform development", "", 50},
+		{"Python", "Programming Languages", "High level interpreted language, used for scripting, data analysis, and machine learning. My go to language for image processing and machine learning", "", 60},
+		{"Lua", "Programming Languages", "Lightweight general purpose scripting language. Mainly used as an embedded scripting language in applications. The language that started my programming journey programming turtles for the computer craft mod for minecraft. Now my go to language for writing quick scripts", "", 70},
 		{"JavaScript", "Programming Languages", "High level interpreted language that powers the web. Primarily used by the browser to add interactivity to webpages.", "", 40},
 		{"Tailwind CSS", "Frontend", "Utility-first CSS framework for rapid UI development. Im a big fan of how tailwind uses utility classes to make it easy to see and change what rules are applied. Plus with components its easy to reuse commonly occurring sets of rules", "", 60},
 		{"HTMX", "Frontend", "HTMX is a javascript library for driving hypermedia-driven interactions without a heavy JS framework. It provides a set of custom html attributes which you use to give html elements the ability to trigger an HTTP request. This allows for the creation of a SPA like app with server side state management and html fragments", "", 50},
 		{"BubbleTea", "Frontend", "Golang framework based on the elm architecture. Great way to quickly add a UI to command line apps", "", 40},
-		{"Echo", "Backend", "High-performance easy to use Go web framework. My goto goLang web framework", "", 60},
-		{"SQLite", "Databases", "Lightweight embedded relational database. Great for small applications and prototyping. My goto database for personal projects", "", 70},
+		{"Echo", "Backend", "High-performance easy to use Go web framework. My go to goLang web framework", "", 60},
+		{"SQLite", "Databases", "Lightweight embedded relational database. Great for small applications and prototyping. My go to database for personal projects", "", 70},
 		{"MySQL", "Databases", "Open source high performance relational database.", "", 70},
 		{"Docker", "Software", "Containerization for consistent application development and deployment. All my websites use docker for easy deployment and management", "", 50},
 		{"Git", "Software", "Version control software for managing and maintaining code bases. Git is in my opinion the gold standard for version control. While ", "", 65},
@@ -71,7 +71,7 @@ func (db *DB) Seed() {
 	}
 
 	//Education
-	db.CreateEducation("BS Computer Science", "Suny Polytechnic", 3.2, true)
+	db.CreateEducation("BS Computer Science", "Suny Polytechnic", 3.29, true)
 	db.CreateEducation("AAS Computer Information Systems", "Suny Onondaga Community College", 3.83, false)
 
 	// Work Experience

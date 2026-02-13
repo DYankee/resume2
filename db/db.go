@@ -144,7 +144,7 @@ func (db *DB) GetAllSkills() ([]models.Skill, error) {
 		FROM skills s
 		JOIN skill_categories sc ON s.category_id = sc.id
 		WHERE s.deleted = 0
-		ORDER BY sc.name, s.name`,
+		ORDER BY s.proficiency DESC`,
 	)
 	if err != nil {
 		return nil, err
