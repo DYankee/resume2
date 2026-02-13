@@ -30,14 +30,16 @@ func (db *DB) Seed() {
 		{"C++", "Programming languages", "High level, compiled, general purpose programming language. Has excellent performance but requires manual memory management. My goto language for games and performance critical code", "", 60},
 		{"Java", "Programming Languages", "High level, compiles to byte code that runs anywhere with a JVM, garbage collected. My goto language for cross platform development", "", 50},
 		{"Python", "Programming Languages", "High level interpreted language, used for scripting, data analysis, and machine learning. My goto language for image processing and machine learning", "", 60},
-		{"Lua", "Programming Languages", "Lightweight general purpose scripting language. Mainly used as an embedded scripting language in applications", "", 60},
-		{"JavaScript", "Programming Languages", "Frontend and backend development with modern JS/TS.", "", 85},
-		{"Tailwind CSS", "Frontend", "Utility-first CSS framework for rapid UI development.", "", 80},
-		{"HTMX", "Frontend", "Hypermedia-driven interactions without heavy JS frameworks.", "", 85},
-		{"Echo", "Backend", "High-performance Go web framework.", "", 75},
-		{"SQLite", "Databases", "Lightweight embedded relational database.", "", 70},
-		{"Docker", "Software", "Containerization for consistent development and deployment.", "", 50},
-		{"Git", "Software", "Version control software for managing and maintaining code bases.", "", 65},
+		{"Lua", "Programming Languages", "Lightweight general purpose scripting language. Mainly used as an embedded scripting language in applications. The language that started my programming journey programming turtles for the computer craft mod for minecraft. Now my goto language for writing quick scripts", "", 70},
+		{"JavaScript", "Programming Languages", "High level interpreted language that powers the web. Primarily used by the browser to add interactivity to webpages.", "", 40},
+		{"Tailwind CSS", "Frontend", "Utility-first CSS framework for rapid UI development. Im a big fan of how tailwind uses utility classes to make it easy to see and change what rules are applied. Plus with components its easy to reuse commonly occurring sets of rules", "", 60},
+		{"HTMX", "Frontend", "HTMX is a javascript library for driving hypermedia-driven interactions without a heavy JS framework. It provides a set of custom html attributes which you use to give html elements the ability to trigger an HTTP request. This allows for the creation of a SPA like app with server side state management and html fragments", "", 50},
+		{"BubbleTea", "Frontend", "Golang framework based on the elm architecture. Great way to quickly add a UI to command line apps", "", 40},
+		{"Echo", "Backend", "High-performance easy to use Go web framework. My goto goLang web framework", "", 60},
+		{"SQLite", "Databases", "Lightweight embedded relational database. Great for small applications and prototyping. My goto database for personal projects", "", 70},
+		{"MySQL", "Databases", "Open source high performance relational database.", "", 70},
+		{"Docker", "Software", "Containerization for consistent application development and deployment. All my websites use docker for easy deployment and management", "", 50},
+		{"Git", "Software", "Version control software for managing and maintaining code bases. Git is in my opinion the gold standard for version control. While ", "", 65},
 	}
 
 	skillIDs := make(map[string]int64)
@@ -50,35 +52,40 @@ func (db *DB) Seed() {
 	p1ID, _ := db.CreateProject(
 		"Portfolio Website",
 		"My personal portfolio built with the GOTH stack.",
-		"A deep dive into building a portfolio with Go, Templ, HTMX, and Tailwind.",
+		"A simple website I built to host my blog and show off what im working on. Built using the GOTH stack which is Golang, Templ, Tailwind, and HTMX.",
 		"", "https://github.com/you/portfolio", "https://example.com",
 	)
 	p2ID, _ := db.CreateProject(
-		"CLI Task Manager",
-		"A terminal-based task manager written in Go.",
-		"Manage your tasks from the command line with SQLite persistence.",
+		"RipR",
+		"A TUI program to help with recording and splitting records with audacity.",
+		"A basic TUI that uses audacity along with the musicBrains API to find the length of each track, account for the variance between the length of the original and user recording. It then exports each track to the desired folder. UI built using the bubbleTea go framework",
 		"", "https://github.com/you/taskcli", "",
 	)
 
 	// Link skills to projects via skill_uses
-	for _, skillName := range []string{"Go", "HTMX", "Tailwind CSS", "Echo", "SQLite"} {
+	for _, skillName := range []string{"GoLang", "HTMX", "Tailwind CSS", "Echo", "SQLite", "Docker"} {
 		db.AddSkillToProject(skillIDs[skillName], p1ID)
 	}
-	for _, skillName := range []string{"Go", "SQLite"} {
+	for _, skillName := range []string{"GoLang", "BubbleTea"} {
 		db.AddSkillToProject(skillIDs[skillName], p2ID)
 	}
 
 	//Education
 	db.CreateEducation("BS Computer Science", "Suny Polytechnic", 3.2, true)
+	db.CreateEducation("AAS Computer Information Systems", "Suny Onondaga Community College", 3.83, false)
 
-	// Experiences
+	// Work Experience
 	db.CreateExperience(
-		"BS Computer Science", "University of Example",
-		"2022-09", "", "Pursuing a BS in Computer Science.",
+		"Fulfillment Center Warehouse Associate", "Amazon",
+		"2023-06", "", "Performed audits on employee performance and provided corrective coaching when necessary. Assessed damaged products and determined if and where they should be disposed of.",
 	)
 	db.CreateExperience(
-		"Software Intern", "Acme Corp",
-		"2024-06", "2024-09", "Built internal tools with Go and React.",
+		"Switcher", "Fed-Ex Ground",
+		"2021-09", "2023-06", "Used an electric switcher to move trailers around the yard and out them in their designated spaces",
+	)
+	db.CreateExperience(
+		"Assistant Director", "Chick-Fil-A",
+		"2016-11", "2019-09", "Managed front of house staff in a fast paced restaurant environment. Received and handled guest complaints in person and over the phone.",
 	)
 
 	// Blog posts
@@ -97,7 +104,7 @@ The GOTH stack combines **Go**, **Templ**, **HTMX**, and **Tailwind CSS** to bui
 - **HTMX** adds dynamic interactions without writing JavaScript.
 - **Tailwind** makes styling fast with utility classes.`,
 		"Go,HTMX,Tutorial",
-		true,
+		false,
 	)
 
 	log.Println("Seeding complete.")
