@@ -1,32 +1,37 @@
+// main.go
 package main
 
 import (
-	"net/http"
-
 	"github.com/DYankee/resume2/db"
 	"github.com/DYankee/resume2/handlers"
-	"github.com/DYankee/resume2/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const dbname = "data.db"
-
 func main() {
-	app := echo.New()
+	database := db.New("db/portfolio.db")
+	database.Seed()
+	defer database.Conn.Close()
 
-	app.Static("/", "assets")
-	app.Use(middleware.Logger())
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{Level: 5}))
 
-	app.GET("/", func(c echo.Context) error { return c.Redirect(http.StatusPermanentRedirect, "/skill") })
+	e.Static("/static", "static")
 
-	db, err := db.NewDataStore(dbname)
-	if err != nil {
-		app.Logger.Fatal(err)
-	}
+	aboutH := &handlers.AboutHandler{DB: database}
+	projectsH := &handlers.ProjectsHandler{DB: database}
+	//blogH := &handlers.BlogHandler{DB: database}
 
-	us := services.NewServicesSkills(services.Skill{}, db)
+	// Pages
+	e.GET("/", aboutH.HandleAboutPage)
+	e.GET("/projects", projectsH.HandleProjectsPage)
+	//e.GET("/blog", blogH.HandleBlogPage)
+	//e.GET("/blog/:slug", blogH.HandleBlogPost)
 
-	h := handlers.New(us)
+	// HTMX API endpoints
+	e.GET("/api/skills/:id", aboutH.HandleSkillDetail)
 
+	e.Logger.Fatal(e.Start(":8080"))
 }

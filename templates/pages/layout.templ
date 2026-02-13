@@ -1,0 +1,28 @@
+// templates/layout.templ
+package pages
+	
+import (
+	"github.com/DYankee/resume2/templates/components"
+)
+
+templ Layout(title string) {
+	<!DOCTYPE html>
+	<html lang="en" class="scroll-smooth">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title } | Zack's Portfolio</title>
+			<link href="/static/css/output.css" rel="stylesheet"/>
+			<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+		</head>
+		<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col">
+			@components.Navbar()
+			<main class="flex-1">
+				{ children... }
+			</main>
+			<footer class="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
+				<p>&copy; 2026 Zack. Built with the GOTH Stack.</p>
+			</footer>
+		</body>
+	</html>
+}
