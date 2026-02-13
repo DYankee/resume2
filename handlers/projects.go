@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/DYankee/resume2/db"
 	"github.com/DYankee/resume2/templates/pages"
@@ -36,5 +37,37 @@ func (h *ProjectsHandler) HandleProjectsPage(c echo.Context) error {
 			Render(c.Request().Context(), c.Response())
 	}
 	return pages.ProjectsPage(items).
+		Render(c.Request().Context(), c.Response())
+}
+
+func (h *ProjectsHandler) HandleProjectExpand(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid project ID")
+	}
+	project, err := h.DB.GetProjectByID(id)
+	if err != nil {
+		return c.String(http.StatusNotFound, "Project not found")
+	}
+	skills, _ := h.DB.GetSkillsForProject(id)
+
+	pw := pages.ProjectWithSkills{Project: *project, Skills: skills}
+	return pages.ProjectCardExpanded(pw).
+		Render(c.Request().Context(), c.Response())
+}
+
+func (h *ProjectsHandler) HandleProjectCollapse(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid project ID")
+	}
+	project, err := h.DB.GetProjectByID(id)
+	if err != nil {
+		return c.String(http.StatusNotFound, "Project not found")
+	}
+	skills, _ := h.DB.GetSkillsForProject(id)
+
+	pw := pages.ProjectWithSkills{Project: *project, Skills: skills}
+	return pages.ProjectCard(pw).
 		Render(c.Request().Context(), c.Response())
 }
