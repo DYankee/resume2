@@ -29,6 +29,11 @@ func New(path string) *DB {
 
 func (db *DB) migrate() {
 	queries := []string{
+		`CREATE TABLE IF NOT EXISTS sessions (
+    		token TEXT PRIMARY KEY,
+    		created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    		expires_at DATETIME NOT NULL
+		)`,
 		`CREATE TABLE IF NOT EXISTS skill_categories (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL UNIQUE

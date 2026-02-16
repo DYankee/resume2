@@ -4,12 +4,13 @@ package main
 import (
 	"github.com/DYankee/resume2/db"
 	"github.com/DYankee/resume2/handlers"
+	customMw "github.com/DYankee/resume2/middleware"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	database := db.New("db/portfolio.db")
+	database := db.New("data/portfolio.db")
 	database.Seed()
 	defer database.Conn.Close()
 
@@ -25,6 +26,7 @@ func main() {
 	aboutH := &handlers.AboutHandler{DB: database}
 	projectsH := &handlers.ProjectsHandler{DB: database}
 	adminH := &handlers.AdminHandler{DB: database}
+	authH := &handlers.AuthHandler{DB: database}
 
 	// Public pages
 	e.GET("/", aboutH.HandleAboutPage)
@@ -40,10 +42,16 @@ func main() {
 		"/api/projects/:id/collapse", projectsH.HandleProjectCollapse,
 	)
 
-	// Admin pages
-	admin := e.Group("/admin")
-	admin.GET("", adminH.HandleDashboard)
+	// Auth routes (public, no middleware)
+	e.GET("/admin/login", authH.HandleLoginPage)
+	e.POST("/admin/login", authH.HandleLogin)
+	e.POST("/admin/logout", authH.HandleLogout)
 
+	// Protected Admin pages
+	admin := e.Group("/admin")
+	admin.Use(customMw.RequireAuth(database))
+
+	admin.GET("", adminH.HandleDashboard)
 	admin.GET("/skills", adminH.HandleAdminSkills)
 	admin.GET("/skills/table", adminH.HandleAdminSkillsTable)
 	admin.GET("/skills/new", adminH.HandleAdminSkillForm)
