@@ -16,25 +16,51 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{Level: 5}))
+	e.Use(middleware.GzipWithConfig(
+		middleware.GzipConfig{Level: 5},
+	))
 
 	e.Static("/static", "static")
 
 	aboutH := &handlers.AboutHandler{DB: database}
 	projectsH := &handlers.ProjectsHandler{DB: database}
-	//blogH := &handlers.BlogHandler{DB: database}
+	adminH := &handlers.AdminHandler{DB: database}
 
-	// Pages
+	// Public pages
 	e.GET("/", aboutH.HandleAboutPage)
 	e.GET("/projects", projectsH.HandleProjectsPage)
-	//e.GET("/blog", blogH.HandleBlogPage)
-	//e.GET("/blog/:slug", blogH.HandleBlogPost)
 
-	// HTMX API endpoints
+	// Public HTMX endpoints
 	e.GET("/api/skills", aboutH.HandleFilteredSkills)
 	e.GET("/api/skills/:id", aboutH.HandleSkillDetail)
-	e.GET("/api/projects/:id/expand", projectsH.HandleProjectExpand)
-	e.GET("/api/projects/:id/collapse", projectsH.HandleProjectCollapse)
+	e.GET(
+		"/api/projects/:id/expand", projectsH.HandleProjectExpand,
+	)
+	e.GET(
+		"/api/projects/:id/collapse", projectsH.HandleProjectCollapse,
+	)
+
+	// Admin pages
+	admin := e.Group("/admin")
+	admin.GET("", adminH.HandleDashboard)
+
+	admin.GET("/skills", adminH.HandleAdminSkills)
+	admin.GET("/skills/table", adminH.HandleAdminSkillsTable)
+	admin.GET("/skills/new", adminH.HandleAdminSkillForm)
+	admin.GET("/skills/:id/edit", adminH.HandleAdminSkillForm)
+	admin.POST("/skills", adminH.HandleCreateSkill)
+	admin.PUT("/skills/:id", adminH.HandleUpdateSkill)
+	admin.DELETE("/skills/:id", adminH.HandleDeleteSkill)
+
+	admin.POST("/categories", adminH.HandleCreateCategory)
+
+	admin.GET("/projects", adminH.HandleAdminProjects)
+	admin.GET("/projects/table", adminH.HandleAdminProjectsTable)
+	admin.GET("/projects/new", adminH.HandleAdminProjectForm)
+	admin.GET("/projects/:id/edit", adminH.HandleAdminProjectForm)
+	admin.POST("/projects", adminH.HandleCreateProject)
+	admin.PUT("/projects/:id", adminH.HandleUpdateProject)
+	admin.DELETE("/projects/:id", adminH.HandleDeleteProject)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

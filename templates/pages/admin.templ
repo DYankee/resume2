@@ -1,0 +1,1101 @@
+// templates/pages/admin.templ
+package pages
+
+import (
+	"fmt"
+	"github.com/DYankee/resume2/models"
+)
+
+// ── Layouts ───────────────────────────────────────
+
+templ AdminLayout(title string) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full bg-gray-950">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta
+				name="viewport"
+				content="width=device-width, initial-scale=1.0"
+			/>
+			<title>Admin — { title }</title>
+			<script
+				src="https://cdn.tailwindcss.com"
+			></script>
+			<script
+				src="https://unpkg.com/htmx.org@1.9.12"
+			></script>
+		</head>
+		<body class="h-full text-gray-100">
+			<div class="flex h-full">
+				@AdminSidebar()
+				<main class="flex-1 overflow-y-auto p-8">
+					{ children... }
+				</main>
+			</div>
+		</body>
+	</html>
+}
+
+templ AdminSidebar() {
+	<aside
+		class="w-64 bg-gray-900 border-r border-gray-800
+		       flex flex-col"
+	>
+		<div class="p-6 border-b border-gray-800">
+			<h1 class="text-xl font-bold text-white">
+				Portfolio Admin
+			</h1>
+		</div>
+		<nav class="flex-1 p-4 space-y-1">
+			<a
+				href="/admin"
+				hx-get="/admin"
+				hx-target="main"
+				hx-push-url="true"
+				class="flex items-center gap-3 px-4 py-2.5
+				       rounded-lg text-gray-300
+				       hover:bg-gray-800 hover:text-white
+				       transition-colors"
+			>
+				<svg
+					class="w-5 h-5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M3 12l2-2m0 0l7-7 7 7M5
+						   10v10a1 1 0 001 1h3m10-11l2
+						   2m-2-2v10a1 1 0 01-1
+						   1h-3m-4 0a1 1 0 01-1-1v-4a1
+						   1 0 011-1h2a1 1 0 011
+						   1v4a1 1 0 01-1 1"
+					></path>
+				</svg>
+				Dashboard
+			</a>
+			<a
+				href="/admin/skills"
+				hx-get="/admin/skills"
+				hx-target="main"
+				hx-push-url="true"
+				class="flex items-center gap-3 px-4 py-2.5
+				       rounded-lg text-gray-300
+				       hover:bg-gray-800 hover:text-white
+				       transition-colors"
+			>
+				<svg
+					class="w-5 h-5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M9.663 17h4.673M12
+						   3v1m6.364 1.636l-.707.707M21
+						   12h-1M4 12H3m3.343-5.657l-.707
+						   -.707m2.828 9.9a5 5 0
+						   117.072 0l-.548.547A3.374
+						   3.374 0 0014 18.469V19a2
+						   2 0 11-4 0v-.531c0-.895
+						   -.356-1.754-.988-2.386l-.548
+						   -.547z"
+					></path>
+				</svg>
+				Skills
+			</a>
+			<a
+				href="/admin/projects"
+				hx-get="/admin/projects"
+				hx-target="main"
+				hx-push-url="true"
+				class="flex items-center gap-3 px-4 py-2.5
+				       rounded-lg text-gray-300
+				       hover:bg-gray-800 hover:text-white
+				       transition-colors"
+			>
+				<svg
+					class="w-5 h-5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M19 11H5m14 0a2 2 0
+						   012 2v6a2 2 0 01-2
+						   2H5a2 2 0 01-2-2v-6a2
+						   2 0 012-2m14 0V9a2 2
+						   0 00-2-2M5 11V9a2 2 0
+						   012-2m0 0V5a2 2 0
+						   012-2h6a2 2 0 012
+						   2v2M7 7h10"
+					></path>
+				</svg>
+				Projects
+			</a>
+		</nav>
+		<div class="p-4 border-t border-gray-800">
+			<a
+				href="/"
+				class="flex items-center gap-3 px-4 py-2.5
+				       rounded-lg text-gray-400
+				       hover:bg-gray-800 hover:text-white
+				       transition-colors text-sm"
+			>
+				← Back to Site
+			</a>
+		</div>
+	</aside>
+}
+
+// ── Dashboard ─────────────────────────────────────
+
+templ AdminDashboardPage(
+	skillCount, projectCount, experienceCount int,
+) {
+	@AdminLayout("Dashboard") {
+		@AdminDashboardContent(
+			skillCount, projectCount, experienceCount,
+		)
+	}
+}
+
+templ AdminDashboardContent(
+	skillCount, projectCount, experienceCount int,
+) {
+	<div>
+		<h2 class="text-2xl font-bold mb-8">Dashboard</h2>
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			<div
+				class="bg-gray-900 border border-gray-800
+				       rounded-xl p-6"
+			>
+				<p class="text-sm text-gray-400 mb-1">
+					Skills
+				</p>
+				<p class="text-3xl font-bold text-indigo-400">
+					{ fmt.Sprint(skillCount) }
+				</p>
+			</div>
+			<div
+				class="bg-gray-900 border border-gray-800
+				       rounded-xl p-6"
+			>
+				<p class="text-sm text-gray-400 mb-1">
+					Projects
+				</p>
+				<p class="text-3xl font-bold text-emerald-400">
+					{ fmt.Sprint(projectCount) }
+				</p>
+			</div>
+			<div
+				class="bg-gray-900 border border-gray-800
+				       rounded-xl p-6"
+			>
+				<p class="text-sm text-gray-400 mb-1">
+					Experiences
+				</p>
+				<p class="text-3xl font-bold text-amber-400">
+					{ fmt.Sprint(experienceCount) }
+				</p>
+			</div>
+		</div>
+	</div>
+}
+
+// ── Skills Admin ──────────────────────────────────
+
+templ AdminSkillsPage(
+	skills []models.Skill,
+	categories []models.Skill_category,
+) {
+	@AdminLayout("Skills") {
+		@AdminSkillsContent(skills, categories)
+	}
+}
+
+templ AdminSkillsContent(
+	skills []models.Skill,
+	categories []models.Skill_category,
+) {
+	<div>
+		<div class="flex items-center justify-between mb-8">
+			<h2 class="text-2xl font-bold">Skills</h2>
+			<div class="flex gap-3">
+				<button
+					hx-get="/admin/skills/new"
+					hx-target="#modal-container"
+					hx-swap="innerHTML"
+					class="px-4 py-2 bg-indigo-600
+					       hover:bg-indigo-500 rounded-lg
+					       text-sm font-medium
+					       transition-colors"
+				>
+					+ Add Skill
+				</button>
+			</div>
+		</div>
+
+		<!-- Quick category creator -->
+		<div
+			class="mb-6 bg-gray-900 border border-gray-800
+			       rounded-xl p-4"
+		>
+			<h3 class="text-sm font-semibold text-gray-400 mb-3">
+				Quick Add Category
+			</h3>
+			<form
+				hx-post="/admin/categories"
+				hx-swap="none"
+				class="flex gap-3"
+			>
+				<input
+					type="text"
+					name="name"
+					placeholder="Category name"
+					required
+					class="flex-1 bg-gray-800 border
+					       border-gray-700 rounded-lg px-4
+					       py-2 text-sm text-white
+					       placeholder-gray-500
+					       focus:outline-none
+					       focus:ring-2
+					       focus:ring-indigo-500"
+				/>
+				<button
+					type="submit"
+					class="px-4 py-2 bg-gray-700
+					       hover:bg-gray-600 rounded-lg
+					       text-sm font-medium
+					       transition-colors"
+				>
+					Create
+				</button>
+			</form>
+		</div>
+
+		<div
+			id="skills-table"
+			hx-get="/admin/skills/table"
+			hx-trigger="refreshSkills from:body"
+			hx-swap="innerHTML"
+		>
+			@SkillsTable(skills)
+		</div>
+		<div id="modal-container"></div>
+	</div>
+}
+
+templ SkillsTable(skills []models.Skill) {
+	<div
+		class="bg-gray-900 border border-gray-800
+		       rounded-xl overflow-hidden"
+	>
+		<table class="w-full">
+			<thead>
+				<tr class="border-b border-gray-800">
+					<th
+						class="text-left px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Name
+					</th>
+					<th
+						class="text-left px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Category
+					</th>
+					<th
+						class="text-left px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Proficiency
+					</th>
+					<th
+						class="text-right px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Actions
+					</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-800">
+				for _, s := range skills {
+					<tr class="hover:bg-gray-800/50 transition-colors">
+						<td class="px-6 py-4">
+							<div class="flex items-center gap-3">
+								if s.IconURL != "" {
+									<img
+										src={ s.IconURL }
+										alt=""
+										class="w-6 h-6
+										       rounded"
+									/>
+								}
+								<span class="font-medium">
+									{ s.Name }
+								</span>
+							</div>
+						</td>
+						<td class="px-6 py-4 text-gray-400 text-sm">
+							{ s.Category }
+						</td>
+						<td class="px-6 py-4">
+							<div class="flex items-center gap-3">
+								<div
+									class="w-24 h-2 bg-gray-700
+									       rounded-full overflow-hidden"
+								>
+									<div
+										class="h-full bg-indigo-500
+										       rounded-full"
+										style={
+											fmt.Sprintf(
+												"width: %d%%",
+												s.Proficiency,
+											)
+										}
+									></div>
+								</div>
+								<span class="text-sm text-gray-400">
+									{
+										fmt.Sprintf(
+											"%d%%", s.Proficiency,
+										)
+									}
+								</span>
+							</div>
+						</td>
+						<td class="px-6 py-4 text-right">
+							<div
+								class="flex items-center
+								       justify-end gap-2"
+							>
+								<button
+									hx-get={
+										fmt.Sprintf(
+											"/admin/skills/%d/edit",
+											s.ID,
+										)
+									}
+									hx-target="#modal-container"
+									hx-swap="innerHTML"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-gray-700
+									       hover:bg-gray-600
+									       rounded-md
+									       transition-colors"
+								>
+									Edit
+								</button>
+								<button
+									hx-delete={
+										fmt.Sprintf(
+											"/admin/skills/%d",
+											s.ID,
+										)
+									}
+									hx-confirm={
+										fmt.Sprintf(
+											"Delete \"%s\"?",
+											s.Name,
+										)
+									}
+									hx-swap="none"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-red-900/50
+									       hover:bg-red-800
+									       text-red-300
+									       rounded-md
+									       transition-colors"
+								>
+									Delete
+								</button>
+							</div>
+						</td>
+					</tr>
+				}
+				if len(skills) == 0 {
+					<tr>
+						<td
+							colspan="4"
+							class="px-6 py-12 text-center
+							       text-gray-500"
+						>
+							No skills yet. Add your first one!
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ SkillForm(
+	skill *models.Skill,
+	categories []models.Skill_category,
+) {
+	<div
+		class="fixed inset-0 bg-black/60 flex items-center
+		       justify-center z-50"
+		id="skill-modal"
+	>
+		<div
+			class="bg-gray-900 border border-gray-800
+			       rounded-2xl w-full max-w-lg p-6 mx-4"
+		>
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-lg font-bold">
+					if skill != nil {
+						Edit Skill
+					} else {
+						New Skill
+					}
+				</h3>
+				<button
+					onclick="document.getElementById('skill-modal').remove()"
+					class="text-gray-500 hover:text-white
+					       transition-colors"
+				>
+					✕
+				</button>
+			</div>
+			<form
+				if skill != nil {
+					hx-put={
+						fmt.Sprintf("/admin/skills/%d", skill.ID)
+					}
+				} else {
+					hx-post="/admin/skills"
+				}
+				hx-swap="none"
+				hx-on::after-request="document.getElementById('skill-modal')?.remove()"
+				class="space-y-4"
+			>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Name
+					</label>
+					<input
+						type="text"
+						name="name"
+						if skill != nil {
+							value={ skill.Name }
+						}
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Category
+					</label>
+					<select
+						name="category_id"
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					>
+						for _, c := range categories {
+							<option
+								value={
+									fmt.Sprint(c.ID)
+								}
+								if skill != nil && skill.Category == c.Name {
+									selected
+								}
+							>
+								{ c.Name }
+							</option>
+						}
+					</select>
+				</div>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Description
+					</label>
+					<textarea
+						name="description"
+						rows="3"
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					>
+						if skill != nil {
+							{ skill.Description }
+						}
+					</textarea>
+				</div>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Icon URL
+					</label>
+					<input
+						type="text"
+						name="icon_url"
+						if skill != nil {
+							value={ skill.IconURL }
+						}
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+                <div>
+                	<label
+                		class="block text-sm font-medium
+                		       text-gray-400 mb-1"
+                	>
+                		Proficiency (<span
+                			id="proficiency-value"
+                		>
+                			if skill != nil {
+                				{ fmt.Sprintf("%d", skill.Proficiency) }
+                			} else {
+                				50
+                			}
+                		</span>%)
+                	</label>
+                	<input
+                		type="range"
+                		name="proficiency"
+                		min="0"
+                		max="100"
+                		if skill != nil {
+                			value={
+                				fmt.Sprint(skill.Proficiency)
+                			}
+                		} else {
+                			value="50"
+                		}
+                		oninput="document.getElementById('proficiency-value').textContent = this.value"
+                		class="w-full accent-indigo-500"
+                	/>
+                </div>
+				<div class="flex justify-end gap-3 pt-2">
+					<button
+						type="button"
+						onclick="document.getElementById('skill-modal').remove()"
+						class="px-4 py-2 bg-gray-700
+						       hover:bg-gray-600
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						class="px-4 py-2 bg-indigo-600
+						       hover:bg-indigo-500
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>
+						if skill != nil {
+							Update
+						} else {
+							Create
+						}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+// ── Projects Admin ────────────────────────────────
+
+templ AdminProjectsPage(
+	projects []models.Project,
+	allSkills []models.Skill,
+) {
+	@AdminLayout("Projects") {
+		@AdminProjectsContent(projects, allSkills)
+	}
+}
+
+templ AdminProjectsContent(
+	projects []models.Project,
+	allSkills []models.Skill,
+) {
+	<div>
+		<div class="flex items-center justify-between mb-8">
+			<h2 class="text-2xl font-bold">Projects</h2>
+			<button
+				hx-get="/admin/projects/new"
+				hx-target="#modal-container"
+				hx-swap="innerHTML"
+				class="px-4 py-2 bg-emerald-600
+				       hover:bg-emerald-500 rounded-lg
+				       text-sm font-medium
+				       transition-colors"
+			>
+				+ Add Project
+			</button>
+		</div>
+		<div
+			id="projects-table"
+			hx-get="/admin/projects/table"
+			hx-trigger="refreshProjects from:body"
+			hx-swap="innerHTML"
+		>
+			@ProjectsTable(projects)
+		</div>
+		<div id="modal-container"></div>
+	</div>
+}
+
+templ ProjectsTable(projects []models.Project) {
+	<div
+		class="bg-gray-900 border border-gray-800
+		       rounded-xl overflow-hidden"
+	>
+		<table class="w-full">
+			<thead>
+				<tr class="border-b border-gray-800">
+					<th
+						class="text-left px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Title
+					</th>
+					<th
+						class="text-left px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Description
+					</th>
+					<th
+						class="text-left px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Links
+					</th>
+					<th
+						class="text-right px-6 py-3
+						       text-xs font-semibold
+						       text-gray-400 uppercase
+						       tracking-wider"
+					>
+						Actions
+					</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-800">
+				for _, p := range projects {
+					<tr class="hover:bg-gray-800/50 transition-colors">
+						<td class="px-6 py-4 font-medium">
+							{ p.Title }
+						</td>
+						<td
+							class="px-6 py-4 text-gray-400
+							       text-sm max-w-xs
+							       truncate"
+						>
+							{ p.Description }
+						</td>
+						<td class="px-6 py-4">
+							<div class="flex gap-2">
+								if p.RepoURL != "" {
+									<a
+										href={ templ.URL(p.RepoURL) }
+										target="_blank"
+										class="text-xs
+										       text-indigo-400
+										       hover:text-indigo-300"
+									>
+										Repo
+									</a>
+								}
+								if p.LiveURL != "" {
+									<a
+										href={ templ.URL(p.LiveURL) }
+										target="_blank"
+										class="text-xs
+										       text-emerald-400
+										       hover:text-emerald-300"
+									>
+										Live
+									</a>
+								}
+							</div>
+						</td>
+						<td class="px-6 py-4 text-right">
+							<div
+								class="flex items-center
+								       justify-end gap-2"
+							>
+								<button
+									hx-get={
+										fmt.Sprintf(
+											"/admin/projects/%d/edit",
+											p.ID,
+										)
+									}
+									hx-target="#modal-container"
+									hx-swap="innerHTML"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-gray-700
+									       hover:bg-gray-600
+									       rounded-md
+									       transition-colors"
+								>
+									Edit
+								</button>
+								<button
+									hx-delete={
+										fmt.Sprintf(
+											"/admin/projects/%d",
+											p.ID,
+										)
+									}
+									hx-confirm={
+										fmt.Sprintf(
+											"Delete \"%s\"?",
+											p.Title,
+										)
+									}
+									hx-swap="none"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-red-900/50
+									       hover:bg-red-800
+									       text-red-300
+									       rounded-md
+									       transition-colors"
+								>
+									Delete
+								</button>
+							</div>
+						</td>
+					</tr>
+				}
+				if len(projects) == 0 {
+					<tr>
+						<td
+							colspan="4"
+							class="px-6 py-12 text-center
+							       text-gray-500"
+						>
+							No projects yet. Add your first one!
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ ProjectForm(
+	project *models.Project,
+	allSkills []models.Skill,
+	projectSkills []models.Skill,
+) {
+	<div
+		class="fixed inset-0 bg-black/60 flex items-center
+		       justify-center z-50"
+		id="project-modal"
+	>
+		<div
+			class="bg-gray-900 border border-gray-800
+			       rounded-2xl w-full max-w-2xl p-6 mx-4
+			       max-h-[90vh] overflow-y-auto"
+		>
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-lg font-bold">
+					if project != nil {
+						Edit Project
+					} else {
+						New Project
+					}
+				</h3>
+				<button
+					onclick="document.getElementById('project-modal').remove()"
+					class="text-gray-500 hover:text-white
+					       transition-colors"
+				>
+					✕
+				</button>
+			</div>
+			<form
+				if project != nil {
+					hx-put={
+						fmt.Sprintf(
+							"/admin/projects/%d", project.ID,
+						)
+					}
+				} else {
+					hx-post="/admin/projects"
+				}
+				hx-swap="none"
+				hx-on::after-request="document.getElementById('project-modal')?.remove()"
+				class="space-y-4"
+			>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Title
+					</label>
+					<input
+						type="text"
+						name="title"
+						if project != nil {
+							value={ project.Title }
+						}
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Short Description
+					</label>
+					<textarea
+						name="description"
+						rows="2"
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					>
+						if project != nil {
+							{ project.Description }
+						}
+					</textarea>
+				</div>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Long Description
+					</label>
+					<textarea
+						name="long_desc"
+						rows="4"
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					>
+						if project != nil {
+							{ project.LongDesc }
+						}
+					</textarea>
+				</div>
+				<div class="grid grid-cols-2 gap-4">
+					<div>
+						<label
+							class="block text-sm font-medium
+							       text-gray-400 mb-1"
+						>
+							Image URL
+						</label>
+						<input
+							type="text"
+							name="image_url"
+							if project != nil {
+								value={ project.ImageURL }
+							}
+							class="w-full bg-gray-800
+							       border border-gray-700
+							       rounded-lg px-4 py-2.5
+							       text-white
+							       focus:outline-none
+							       focus:ring-2
+							       focus:ring-indigo-500"
+						/>
+					</div>
+					<div>
+						<label
+							class="block text-sm font-medium
+							       text-gray-400 mb-1"
+						>
+							Repo URL
+						</label>
+						<input
+							type="text"
+							name="repo_url"
+							if project != nil {
+								value={ project.RepoURL }
+							}
+							class="w-full bg-gray-800
+							       border border-gray-700
+							       rounded-lg px-4 py-2.5
+							       text-white
+							       focus:outline-none
+							       focus:ring-2
+							       focus:ring-indigo-500"
+						/>
+					</div>
+				</div>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Live URL
+					</label>
+					<input
+						type="text"
+						name="live_url"
+						if project != nil {
+							value={ project.LiveURL }
+						}
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-2"
+					>
+						Skills Used
+					</label>
+					<div
+						class="grid grid-cols-2 gap-2
+						       max-h-48 overflow-y-auto
+						       bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       p-3"
+					>
+						for _, s := range allSkills {
+							<label
+								class="flex items-center gap-2
+								       text-sm text-gray-300
+								       cursor-pointer
+								       hover:text-white"
+							>
+								<input
+									type="checkbox"
+									name="skill_ids"
+									value={
+										fmt.Sprint(s.ID)
+									}
+									if hasSkill(projectSkills, s.ID) {
+										checked
+									}
+									class="rounded border-gray-600
+									       bg-gray-700
+									       text-indigo-500
+									       focus:ring-indigo-500"
+								/>
+								{ s.Name }
+							</label>
+						}
+					</div>
+				</div>
+				<div class="flex justify-end gap-3 pt-2">
+					<button
+						type="button"
+						onclick="document.getElementById('project-modal').remove()"
+						class="px-4 py-2 bg-gray-700
+						       hover:bg-gray-600
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						class="px-4 py-2 bg-emerald-600
+						       hover:bg-emerald-500
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>
+						if project != nil {
+							Update
+						} else {
+							Create
+						}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+func hasSkill(skills []models.Skill, id int64) bool {
+	for _, s := range skills {
+		if s.ID == id {
+			return true
+		}
+	}
+	return false
+}
