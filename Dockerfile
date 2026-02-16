@@ -32,7 +32,7 @@ COPY --from=builder /app/server .
 COPY --from=builder /app/static ./static
 
 # SQLite data lives here
-RUN mkdir -p /app/db
+RUN mkdir -p /app/data
 
 EXPOSE 8080
 
