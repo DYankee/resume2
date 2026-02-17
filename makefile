@@ -12,14 +12,14 @@ templ:
 
 # Build Tailwind CSS
 css:
-	npx tailwindcss -i static/css/input.css -o static/css/output.css --minify
+	tailwindcss -i static/css/input.css -o static/css/output.css --minify
 
 # Watch mode (run in separate terminals)
 watch-templ:
 	templ generate --watch
 
 watch-css:
-	npx tailwindcss -i static/css/input.css -o static/css/output.css --watch
+	tailwindcss -i static/css/input.css -o static/css/output.css --watch
 
 build: templ css
 	go build -o portfolio main.go
