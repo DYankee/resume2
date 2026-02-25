@@ -25,7 +25,7 @@ templ AboutContent(
 		categories []models.Skill_category,
 	) {
 	// ---- About Me ----
-	<section class="mx-auto max-w-6xl px-6 py-20">
+	<section class="mx-auto max-w-7xl px-6 py-20">
 		<div class="flex flex-col md:flex-row items-center gap-12">
 			<div class="w-60 h-80 rounded-full overflow-hidden shrink-0 border-2 border-purple-500">
 			  <img
@@ -60,7 +60,7 @@ templ AboutContent(
 	</section>
 
 	// ---- Skills ----
-	<section class="mx-auto max-w-6xl px-6 py-16" id="skills-section">
+	<section class="mx-auto max-w-7xl px-6 py-16" id="skills-section">
 		<h2 class="text-3xl font-bold mb-10 text-center">Skills</h2>
 
 		// Category dropdown
@@ -89,7 +89,7 @@ templ AboutContent(
 	</section>
 
 	// ---- Education ----
-	<section class="mx-auto max-w-6xl px-6 py-16">
+	<section class="mx-auto max-w-7xl px-6 py-16">
 		<h2 class="text-3xl font-bold mb-10 text-center">Education</h2>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			for _, edu := range education {
@@ -126,7 +126,7 @@ templ AboutContent(
 	</section>
 
 	// ---- Experience ----
-	<section class="mx-auto max-w-6xl px-6 py-16">
+	<section class="mx-auto max-w-7xl px-6 py-16">
 		<h2 class="text-3xl font-bold mb-10 text-center">Experience</h2>
 		<div class="relative border-l-2 border-purple-600 ml-4 space-y-10 pl-8">
 			for _, exp := range experiences {
@@ -155,12 +155,11 @@ templ AboutContent(
 
 
 
-// SkillListWithDetail renders the left list + right detail together.
-// Returned as a fragment when the category dropdown changes.
+// SkillListWithDetail renders the left list + right detail together
 templ SkillListWithDetail(skills []models.Skill) {
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 		// Left: skill list
-		<div class="md:col-span-1 space-y-2 max-h-[500px] overflow-y-auto pr-2" id="skill-list">
+		<div class="md:col-span-1 space-y-2 max-h-[400px] overflow-y-auto pr-2" id="skill-list">
 			if len(skills) == 0 {
 				<p class="text-gray-500 text-sm px-4 py-3">
 					No skills in this category.

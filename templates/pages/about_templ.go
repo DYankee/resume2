@@ -99,7 +99,7 @@ func AboutContent(
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section class=\"mx-auto max-w-6xl px-6 py-20\"><div class=\"flex flex-col md:flex-row items-center gap-12\"><div class=\"w-60 h-80 rounded-full overflow-hidden shrink-0 border-2 border-purple-500\"><img src=\"/static/imgs/headshot.png\" alt=\"Picture of zachary geary\" class=\"w-full h-full object-cover\" onerror=\"this.style.display='none'; this.nextElementSibling.style.display='flex';\"><div class=\"w-full h-full bg-linear-to-br from-purple-500 to-blue-600 items-center justify-center text-5xl font-bold hidden\">Z</div></div><div><h1 class=\"text-4xl font-bold mb-4\">Hey, I'm <span class=\"text-purple-400\">Zachary Geary</span></h1><p class=\"text-lg text-gray-300 leading-relaxed max-w-2xl\">I'm a highly motivated college student looking to gain experience in the professional world.  I have experience developing small websites and programs, working with other developers in an  agile like environment and interfacing with customers to ensure product satisfaction. Currently open to work opportunities or internships.</p><br><p>I currently attend SUNY Polytechnic full time pursuing a CS degree. In my free time I enjoy playing guitar,  making games, coding tools for myself, and going hiking.</p></div></div></section><section class=\"mx-auto max-w-6xl px-6 py-16\" id=\"skills-section\"><h2 class=\"text-3xl font-bold mb-10 text-center\">Skills</h2><div class=\"mb-6 flex justify-center\"><select class=\"bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition cursor-pointer\" hx-get=\"/api/skills\" hx-target=\"#skills-panel\" hx-trigger=\"change\" hx-swap=\"innerHTML\" name=\"category_id\"><option value=\"all\">All Categories</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section class=\"mx-auto max-w-7xl px-6 py-20\"><div class=\"flex flex-col md:flex-row items-center gap-12\"><div class=\"w-60 h-80 rounded-full overflow-hidden shrink-0 border-2 border-purple-500\"><img src=\"/static/imgs/headshot.png\" alt=\"Picture of zachary geary\" class=\"w-full h-full object-cover\" onerror=\"this.style.display='none'; this.nextElementSibling.style.display='flex';\"><div class=\"w-full h-full bg-linear-to-br from-purple-500 to-blue-600 items-center justify-center text-5xl font-bold hidden\">Z</div></div><div><h1 class=\"text-4xl font-bold mb-4\">Hey, I'm <span class=\"text-purple-400\">Zachary Geary</span></h1><p class=\"text-lg text-gray-300 leading-relaxed max-w-2xl\">I'm a highly motivated college student looking to gain experience in the professional world.  I have experience developing small websites and programs, working with other developers in an  agile like environment and interfacing with customers to ensure product satisfaction. Currently open to work opportunities or internships.</p><br><p>I currently attend SUNY Polytechnic full time pursuing a CS degree. In my free time I enjoy playing guitar,  making games, coding tools for myself, and going hiking.</p></div></div></section><section class=\"mx-auto max-w-7xl px-6 py-16\" id=\"skills-section\"><h2 class=\"text-3xl font-bold mb-10 text-center\">Skills</h2><div class=\"mb-6 flex justify-center\"><select class=\"bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition cursor-pointer\" hx-get=\"/api/skills\" hx-target=\"#skills-panel\" hx-trigger=\"change\" hx-swap=\"innerHTML\" name=\"category_id\"><option value=\"all\">All Categories</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -143,7 +143,7 @@ func AboutContent(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></section><section class=\"mx-auto max-w-6xl px-6 py-16\"><h2 class=\"text-3xl font-bold mb-10 text-center\">Education</h2><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></section><section class=\"mx-auto max-w-7xl px-6 py-16\"><h2 class=\"text-3xl font-bold mb-10 text-center\">Education</h2><div class=\"grid grid-cols-1 md:grid-cols-2 gap-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -217,7 +217,7 @@ func AboutContent(
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></section><section class=\"mx-auto max-w-6xl px-6 py-16\"><h2 class=\"text-3xl font-bold mb-10 text-center\">Experience</h2><div class=\"relative border-l-2 border-purple-600 ml-4 space-y-10 pl-8\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></section><section class=\"mx-auto max-w-7xl px-6 py-16\"><h2 class=\"text-3xl font-bold mb-10 text-center\">Experience</h2><div class=\"relative border-l-2 border-purple-600 ml-4 space-y-10 pl-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -312,8 +312,7 @@ func AboutContent(
 	})
 }
 
-// SkillListWithDetail renders the left list + right detail together.
-// Returned as a fragment when the category dropdown changes.
+// SkillListWithDetail renders the left list + right detail together
 func SkillListWithDetail(skills []models.Skill) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -335,7 +334,7 @@ func SkillListWithDetail(skills []models.Skill) templ.Component {
 			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"grid grid-cols-1 md:grid-cols-3 gap-8\"><div class=\"md:col-span-1 space-y-2 max-h-[500px] overflow-y-auto pr-2\" id=\"skill-list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"grid grid-cols-1 md:grid-cols-3 gap-8\"><div class=\"md:col-span-1 space-y-2 max-h-[400px] overflow-y-auto pr-2\" id=\"skill-list\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -374,7 +373,7 @@ func SkillListWithDetail(skills []models.Skill) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/api/skills/%d", skill.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 176, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 175, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -387,7 +386,7 @@ func SkillListWithDetail(skills []models.Skill) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(skill.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 181, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 180, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -449,7 +448,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(skill.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 207, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 206, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -462,7 +461,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(skill.Category)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 210, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 209, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -475,7 +474,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(skill.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 213, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 212, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -488,7 +487,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", skill.Proficiency))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 219, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 218, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -501,7 +500,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("width: %d%%", skill.Proficiency))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 225, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 224, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -524,7 +523,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 				var templ_7745c5c3_Var26 string
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(project.ImageURL)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 240, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 239, Col: 29}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
@@ -537,7 +536,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(project.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 241, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 240, Col: 26}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {
@@ -560,7 +559,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(project.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 251, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 250, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -573,7 +572,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(project.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 254, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 253, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -591,7 +590,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 				var templ_7745c5c3_Var30 templ.SafeURL
 				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(project.RepoURL))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 259, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 258, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
@@ -610,7 +609,7 @@ func SkillDetail(skill *models.Skill, project *models.Project) templ.Component {
 				var templ_7745c5c3_Var31 templ.SafeURL
 				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(project.LiveURL))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 268, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/about.templ`, Line: 267, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 				if templ_7745c5c3_Err != nil {
