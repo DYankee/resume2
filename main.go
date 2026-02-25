@@ -15,10 +15,13 @@ func main() {
 	defer database.Conn.Close()
 
 	e := echo.New()
-	e.Use(middleware.Logger())
+	e.Use(middleware.RequestLogger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.GzipWithConfig(
 		middleware.GzipConfig{Level: 5},
+	))
+	e.Use(middleware.RateLimiter(
+		middleware.NewRateLimiterMemoryStore(20), // 1 req/sec
 	))
 
 	e.Static("/static", "static")
@@ -43,8 +46,12 @@ func main() {
 	)
 
 	// Auth routes (public, no middleware)
+	loginLimiter := middleware.RateLimiter(
+		middleware.NewRateLimiterMemoryStore(20),
+	)
+
 	e.GET("/admin/login", authH.HandleLoginPage)
-	e.POST("/admin/login", authH.HandleLogin)
+	e.POST("/admin/login", authH.HandleLogin, loginLimiter)
 	e.POST("/admin/logout", authH.HandleLogout)
 
 	// Protected Admin pages
