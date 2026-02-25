@@ -51,6 +51,7 @@ func main() {
 	admin := e.Group("/admin")
 	admin.Use(customMw.RequireAuth(database))
 
+	// Skill routes
 	admin.GET("", adminH.HandleDashboard)
 	admin.GET("/skills", adminH.HandleAdminSkills)
 	admin.GET("/skills/table", adminH.HandleAdminSkillsTable)
@@ -62,6 +63,7 @@ func main() {
 
 	admin.POST("/categories", adminH.HandleCreateCategory)
 
+	// Project routes
 	admin.GET("/projects", adminH.HandleAdminProjects)
 	admin.GET("/projects/table", adminH.HandleAdminProjectsTable)
 	admin.GET("/projects/new", adminH.HandleAdminProjectForm)
@@ -69,6 +71,24 @@ func main() {
 	admin.POST("/projects", adminH.HandleCreateProject)
 	admin.PUT("/projects/:id", adminH.HandleUpdateProject)
 	admin.DELETE("/projects/:id", adminH.HandleDeleteProject)
+
+	// Experience routes
+	admin.GET("/experience", adminH.HandleAdminExperience)
+	admin.GET("/experience/table", adminH.HandleAdminExperienceTable)
+	admin.GET("/experience/new", adminH.HandleAdminExperienceForm)
+	admin.GET("/experience/:id/edit", adminH.HandleAdminExperienceForm)
+	admin.POST("/experience", adminH.HandleCreateExperience)
+	admin.PUT("/experience/:id", adminH.HandleUpdateExperience)
+	admin.DELETE("/experience/:id", adminH.HandleDeleteExperience)
+
+	// Education routes
+	admin.GET("/education", adminH.HandleAdminEducation)
+	admin.GET("/education/new", adminH.HandleAdminEducationForm)
+	admin.GET("/education/:id/edit", adminH.HandleAdminEducationForm)
+	admin.GET("/education/table", adminH.HandleAdminEducationTable)
+	admin.POST("/education", adminH.HandleCreateEducation)
+	admin.PUT("/education/:id", adminH.HandleUpdateEducation)
+	admin.DELETE("/education/:id", adminH.HandleDeleteEducation)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

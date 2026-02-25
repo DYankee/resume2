@@ -54,9 +54,10 @@ type Experience struct {
 }
 
 type Education struct {
+	ID          int64   `json:"id"`
 	Degree      string  `json:"degree"`
 	College     string  `json:"college"`
-	Gpa         float32 `json:"gpa"`
+	Gpa         float64 `json:"gpa"`
 	In_progress bool    `json:"in_progress"`
 }
 

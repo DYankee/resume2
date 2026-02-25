@@ -318,3 +318,240 @@ func (h *AdminHandler) HandleAdminProjectsTable(c echo.Context) error {
 	return pages.ProjectsTable(projects).
 		Render(c.Request().Context(), c.Response())
 }
+
+// ── Experience ──────────────────────────────────────
+func (h *AdminHandler) HandleAdminExperience(c echo.Context) error {
+	experience, err := h.DB.GetAllExperiences()
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError, "Failed to load Experiences",
+		)
+	}
+
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return pages.AdminExperienceContent(experience).
+			Render(c.Request().Context(), c.Response())
+	}
+	return pages.AdminExperiencePage(experience).
+		Render(c.Request().Context(), c.Response())
+}
+
+func (h *AdminHandler) HandleAdminExperienceForm(c echo.Context) error {
+
+	idStr := c.Param("id")
+	if idStr == "" {
+		// New skill form
+		return pages.ExperienceForm(nil).
+			Render(c.Request().Context(), c.Response())
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid experience ID")
+	}
+	experience, err := h.DB.GetExperienceByID(id)
+	if err != nil {
+		return c.String(http.StatusNotFound, "Experience not found")
+	}
+	return pages.ExperienceForm(experience).
+		Render(c.Request().Context(), c.Response())
+}
+
+func (h *AdminHandler) HandleCreateExperience(c echo.Context) error {
+	title := c.FormValue("title")
+	company := c.FormValue("company")
+	description := c.FormValue("description")
+	startDate := c.FormValue("start_date")
+	endDate := c.FormValue("end_date")
+
+	if title == "" {
+		return c.String(http.StatusBadRequest, "Title required")
+	}
+	if company == "" {
+		return c.String(http.StatusBadRequest, "company required")
+	}
+	if startDate == "" {
+		return c.String(http.StatusBadRequest, "start Date required")
+	}
+
+	_, err := h.DB.CreateExperience(
+		title, company, startDate, endDate, description,
+	)
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError, "Failed to create project",
+		)
+	}
+
+	c.Response().Header().Set("HX-Trigger", "refreshExperience")
+	return c.String(http.StatusOK, "")
+}
+
+func (h *AdminHandler) HandleUpdateExperience(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid experience ID")
+	}
+
+	title := c.FormValue("title")
+	company := c.FormValue("company")
+	description := c.FormValue("description")
+	startDate := c.FormValue("start_date")
+	endDate := c.FormValue("end_date")
+
+	err = h.DB.UpdateExperience(
+		id, title, company, startDate, endDate, description,
+	)
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError, "Failed to update Experience",
+		)
+	}
+
+	c.Response().Header().Set("HX-Trigger", "refreshExperience")
+	return c.String(http.StatusOK, "")
+}
+
+func (h *AdminHandler) HandleDeleteExperience(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid experience ID")
+	}
+
+	err = h.DB.SoftDeleteExperience(id)
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError, "Failed to delete project",
+		)
+	}
+
+	c.Response().Header().Set("HX-Trigger", "refreshExperience")
+	return c.String(http.StatusOK, "")
+}
+
+func (h *AdminHandler) HandleAdminExperienceTable(c echo.Context) error {
+	experience, err := h.DB.GetAllExperiences()
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError, "Failed to load experience",
+		)
+	}
+	return pages.ExperienceTable(experience).
+		Render(c.Request().Context(), c.Response())
+}
+
+// ── Education ─────────────────────────────────────
+
+func (h *AdminHandler) HandleAdminEducation(c echo.Context) error {
+	education, err := h.DB.GetAllEducation()
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError,
+			"Failed to load education",
+		)
+	}
+
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return pages.AdminEducationContent(education).
+			Render(c.Request().Context(), c.Response())
+	}
+	return pages.AdminEducationPage(education).
+		Render(c.Request().Context(), c.Response())
+}
+
+func (h *AdminHandler) HandleAdminEducationForm(c echo.Context) error {
+	idStr := c.Param("id")
+	if idStr == "" {
+		return pages.EducationForm(nil).
+			Render(c.Request().Context(), c.Response())
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid education ID")
+	}
+	education, err := h.DB.GetEducationByID(id)
+	if err != nil {
+		return c.String(http.StatusNotFound, "Education not found")
+	}
+	return pages.EducationForm(education).
+		Render(c.Request().Context(), c.Response())
+}
+
+func (h *AdminHandler) HandleCreateEducation(c echo.Context) error {
+	degree := c.FormValue("degree")
+	college := c.FormValue("college")
+	gpa, _ := strconv.ParseFloat(c.FormValue("gpa"), 64)
+	inProgress := c.FormValue("in_progress") == "true"
+
+	if degree == "" {
+		return c.String(http.StatusBadRequest, "Degree required")
+	}
+	if college == "" {
+		return c.String(http.StatusBadRequest, "College required")
+	}
+
+	err := h.DB.CreateEducation(degree, college, gpa, inProgress)
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError,
+			"Failed to create education",
+		)
+	}
+
+	c.Response().Header().Set("HX-Trigger", "refreshEducation")
+	return c.String(http.StatusOK, "")
+}
+
+func (h *AdminHandler) HandleUpdateEducation(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid education ID")
+	}
+
+	degree := c.FormValue("degree")
+	college := c.FormValue("college")
+	gpa, _ := strconv.ParseFloat(c.FormValue("gpa"), 64)
+	inProgress := c.FormValue("in_progress") == "true"
+
+	err = h.DB.UpdateEducation(id, degree, college, gpa, inProgress)
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError,
+			"Failed to update education",
+		)
+	}
+
+	c.Response().Header().Set("HX-Trigger", "refreshEducation")
+	return c.String(http.StatusOK, "")
+}
+
+func (h *AdminHandler) HandleDeleteEducation(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid education ID")
+	}
+
+	err = h.DB.SoftDeleteEducation(id)
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError,
+			"Failed to delete education",
+		)
+	}
+
+	c.Response().Header().Set("HX-Trigger", "refreshEducation")
+	return c.String(http.StatusOK, "")
+}
+
+func (h *AdminHandler) HandleAdminEducationTable(c echo.Context) error {
+	education, err := h.DB.GetAllEducation()
+	if err != nil {
+		return c.String(
+			http.StatusInternalServerError,
+			"Failed to load education",
+		)
+	}
+	return pages.EducationTable(education).
+		Render(c.Request().Context(), c.Response())
+}

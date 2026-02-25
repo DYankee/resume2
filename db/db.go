@@ -483,6 +483,26 @@ func (db *DB) GetAllExperiences() ([]models.Experience, error) {
 	return exps, nil
 }
 
+func (db *DB) GetExperienceByID(experienceID int64) (*models.Experience, error) {
+	var e models.Experience
+	var deletedAt string
+	err := db.Conn.QueryRow(`
+		SELECT id, title, company, start_date, end_date, description,
+		       deleted, created_at, updated_at, COALESCE(deleted_at, '')
+		FROM experiences
+		WHERE id = ? AND deleted = 0`, experienceID,
+	).Scan(
+		&e.ID, &e.Title, &e.Company, &e.StartDate, &e.EndDate,
+		&e.Description, &e.Deleted, &e.CreatedAt, &e.UpdatedAt,
+		&deletedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return &e, nil
+}
+
 func (db *DB) CreateExperience(title, company, startDate, endDate, description string) (int64, error) {
 	res, err := db.Conn.Exec(`
 		INSERT INTO experiences (title, company, start_date, end_date, description)
@@ -519,7 +539,7 @@ func (db *DB) SoftDeleteExperience(id int64) error {
 
 func (db *DB) GetAllEducation() ([]models.Education, error) {
 	rows, err := db.Conn.Query(`
-		SELECT degree, college, gpa, in_progress
+		SELECT id, degree, college, gpa, in_progress
 		FROM education
 		ORDER BY in_progress DESC, degree`,
 	)
@@ -531,7 +551,7 @@ func (db *DB) GetAllEducation() ([]models.Education, error) {
 	var edus []models.Education
 	for rows.Next() {
 		var e models.Education
-		if err := rows.Scan(&e.Degree, &e.College, &e.Gpa, &e.In_progress); err != nil {
+		if err := rows.Scan(&e.ID, &e.Degree, &e.College, &e.Gpa, &e.In_progress); err != nil {
 			return nil, err
 		}
 		edus = append(edus, e)
@@ -539,7 +559,7 @@ func (db *DB) GetAllEducation() ([]models.Education, error) {
 	return edus, nil
 }
 
-func (db *DB) CreateEducation(degree, college string, gpa float32, inProgress bool) error {
+func (db *DB) CreateEducation(degree, college string, gpa float64, inProgress bool) error {
 	ip := 0
 	if inProgress {
 		ip = 1
@@ -548,6 +568,44 @@ func (db *DB) CreateEducation(degree, college string, gpa float32, inProgress bo
 		INSERT INTO education (degree, college, gpa, in_progress)
 		VALUES (?, ?, ?, ?)`,
 		degree, college, gpa, ip,
+	)
+	return err
+}
+
+func (db *DB) GetEducationByID(id int64) (*models.Education, error) {
+	var e models.Education
+	err := db.Conn.QueryRow(`
+		SELECT id, degree, college, gpa, in_progress
+		FROM education
+		WHERE id = ?`, id,
+	).Scan(&e.ID, &e.Degree, &e.College, &e.Gpa, &e.In_progress)
+	if err != nil {
+		return nil, err
+	}
+	return &e, nil
+}
+
+func (db *DB) UpdateEducation(
+	id int64, degree, college string, gpa float64, inProgress bool,
+) error {
+	ip := 0
+	if inProgress {
+		ip = 1
+	}
+	_, err := db.Conn.Exec(`
+		UPDATE education
+		SET degree = ?, college = ?, gpa = ?, in_progress = ?
+		WHERE id = ?`,
+		degree, college, gpa, ip, id,
+	)
+	return err
+}
+
+func (db *DB) SoftDeleteEducation(id int64) error {
+	_, err := db.Conn.Exec(`
+		UPDATE education
+		SET deleted = 1, deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+		WHERE id = ?`, id,
 	)
 	return err
 }
