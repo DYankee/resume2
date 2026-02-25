@@ -234,17 +234,17 @@ templ AdminSidebar() {
 // ── Dashboard ─────────────────────────────────────
 
 templ AdminDashboardPage(
-	skillCount, projectCount, experienceCount int,
+	skillCount, projectCount, experienceCount, educationCount int,
 ) {
 	@AdminLayout("Dashboard") {
 		@AdminDashboardContent(
-			skillCount, projectCount, experienceCount,
+			skillCount, projectCount, experienceCount, educationCount,
 		)
 	}
 }
 
 templ AdminDashboardContent(
-	skillCount, projectCount, experienceCount int,
+	skillCount, projectCount, experienceCount, educationCount int,
 ) {
 	<div>
 		<h2 class="text-2xl font-bold mb-8">Dashboard</h2>
@@ -280,6 +280,17 @@ templ AdminDashboardContent(
 				</p>
 				<p class="text-3xl font-bold text-amber-400">
 					{ fmt.Sprint(experienceCount) }
+				</p>
+			</div>
+			<div
+				class="bg-gray-900 border border-gray-800
+				       rounded-xl p-6"
+			>
+				<p class="text-sm text-gray-400 mb-1">
+					Education
+				</p>
+				<p class="text-3xl font-bold text-indigo-400">
+					{ fmt.Sprint(educationCount) }
 				</p>
 			</div>
 		</div>

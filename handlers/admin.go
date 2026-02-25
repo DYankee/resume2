@@ -20,14 +20,15 @@ func (h *AdminHandler) HandleDashboard(c echo.Context) error {
 	skills, _ := h.DB.GetAllSkills()
 	projects, _ := h.DB.GetAllProjects()
 	experiences, _ := h.DB.GetAllExperiences()
+	education, _ := h.DB.GetAllEducation()
 
 	if c.Request().Header.Get("HX-Request") == "true" {
 		return pages.AdminDashboardContent(
-			len(skills), len(projects), len(experiences),
+			len(skills), len(projects), len(experiences), len(education),
 		).Render(c.Request().Context(), c.Response())
 	}
 	return pages.AdminDashboardPage(
-		len(skills), len(projects), len(experiences),
+		len(skills), len(projects), len(experiences), len(education),
 	).Render(c.Request().Context(), c.Response())
 }
 
