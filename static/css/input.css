@@ -1,1 +1,6 @@
 @import "tailwindcss";
+@layer components{
+    .table-header{
+        @apply text-left px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider
+    }
+}

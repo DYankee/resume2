@@ -18,9 +18,10 @@ templ AdminLayout(title string) {
 				content="width=device-width, initial-scale=1.0"
 			/>
 			<title>Admin — { title }</title>
-			<script
-				src="https://cdn.tailwindcss.com"
-			></script>
+			<link
+				rel="stylesheet"
+				href="/static/css/output.css"
+			></link>
 			<script
 				src="https://unpkg.com/htmx.org@1.9.12"
 			></script>
@@ -312,36 +313,16 @@ templ SkillsTable(skills []models.Skill) {
 		<table class="w-full">
 			<thead>
 				<tr class="border-b border-gray-800">
-					<th
-						class="text-left px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header">
 						Name
 					</th>
-					<th
-						class="text-left px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header">
 						Category
 					</th>
-					<th
-						class="text-left px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header">
 						Proficiency
 					</th>
-					<th
-						class="text-right px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header text-right">
 						Actions
 					</th>
 				</tr>
@@ -710,36 +691,16 @@ templ ProjectsTable(projects []models.Project) {
 		<table class="w-full">
 			<thead>
 				<tr class="border-b border-gray-800">
-					<th
-						class="text-left px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header">
 						Title
 					</th>
-					<th
-						class="text-left px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header">
 						Description
 					</th>
-					<th
-						class="text-left px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header">
 						Links
 					</th>
-					<th
-						class="text-right px-6 py-3
-						       text-xs font-semibold
-						       text-gray-400 uppercase
-						       tracking-wider"
-					>
+					<th class="table-header text-right">
 						Actions
 					</th>
 				</tr>
@@ -1099,6 +1060,42 @@ templ ProjectForm(
 		</div>
 	</div>
 }
+
+// ── Experience & Education Admin ────────────────────────────────
+
+templ AdminExperienceAndEducationPage(
+	experience []models.Experience,
+	education []models.Experience,
+){
+	@AdminLayout("Projects"){
+		@AdminExperienceAndEducationContent(experience, education)
+	}
+}
+
+templ AdminExperienceAndEducationContent(
+	experience []models.Experience,
+	education []models.Experience,
+) {
+	<div>
+		<div>
+			<div>
+				<h2>Education</h2>
+				<button>
+				 + Add Education
+				</button>
+			</div>
+		</div>
+
+		<div>
+			<h2>Experience</h2>
+		</div>
+	</div>
+}
+
+
+
+
+
 
 func hasSkill(skills []models.Skill, id int64) bool {
 	for _, s := range skills {
