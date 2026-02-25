@@ -143,6 +143,70 @@ templ AdminSidebar() {
 				</svg>
 				Projects
 			</a>
+			<a
+				href="/admin/experience"
+				hx-get="/admin/experience"
+				hx-target="main"
+				hx-push-url="true"
+				class="flex items-center gap-3 px-4 py-2.5
+				       rounded-lg text-gray-300
+				       hover:bg-gray-800 hover:text-white
+				       transition-colors"
+			>
+				<svg
+					class="w-5 h-5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M21 13.255A23.931 23.931
+						   0 0112 15c-3.183
+						   0-6.22-.62-9-1.745M16
+						   6V4a2 2 0 00-2-2h-4a2
+						   2 0 00-2 2v2m4 6h.01M5
+						   20h14a2 2 0 002-2V8a2
+						   2 0 00-2-2H5a2 2 0
+						   00-2 2v10a2 2 0 002 2z"
+					></path>
+				</svg>
+				Experience
+			</a>
+			<a
+				href="/admin/education"
+				hx-get="/admin/education"
+				hx-target="main"
+				hx-push-url="true"
+				class="flex items-center gap-3 px-4 py-2.5
+				       rounded-lg text-gray-300
+				       hover:bg-gray-800 hover:text-white
+				       transition-colors"
+			>
+				<svg
+					class="w-5 h-5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 14l9-5-9-5-9 5
+						   9 5zm0 0l6.16-3.422a12.083
+						   12.083 0 01.665 6.479A11.952
+						   11.952 0 0012
+						   20.055a11.952 11.952 0
+						   00-6.824-2.998 12.078
+						   12.078 0 01.665-6.479L12
+						   14zm-4 6v-7.5l4-2.222"
+					></path>
+				</svg>
+				Education
+			</a>
 		</nav>
         <div class="p-4 border-t border-gray-800 space-y-1">
         	<a
@@ -1061,39 +1125,624 @@ templ ProjectForm(
 	</div>
 }
 
-// ── Experience & Education Admin ────────────────────────────────
+// ── Experience Admin ────────────────────────────────
 
-templ AdminExperienceAndEducationPage(
+templ AdminExperiencePage(
 	experience []models.Experience,
-	education []models.Experience,
 ){
-	@AdminLayout("Projects"){
-		@AdminExperienceAndEducationContent(experience, education)
+	@AdminLayout("Experience"){
+		@AdminExperienceContent(experience)
 	}
 }
 
-templ AdminExperienceAndEducationContent(
+templ AdminExperienceContent(
 	experience []models.Experience,
-	education []models.Experience,
 ) {
 	<div>
 		<div>
-			<div>
-				<h2>Education</h2>
-				<button>
-				 + Add Education
+			<div class="flex items-center justify-between mb-8">
+				<h2 class="text-2xl font-bold">Experience</h2>
+				<button
+					hx-get="/admin/experience/new"
+					hx-target="#modal-container"
+					hx-swap="innerHTML"
+					class="px-4 py-2 bg-emerald-600
+					       hover:bg-emerald-500 rounded-lg
+					       text-sm font-medium
+					       transition-colors"
+				>
+					+ Add Experience
 				</button>
 			</div>
-		</div>
-
-		<div>
-			<h2>Experience</h2>
+			<div
+				id="experience-table"
+				hx-get="/admin/experience/table"
+				hx-trigger="refreshExperience from:body"
+				hx-swap="innerHTML"
+			>
+				@ExperienceTable(experience)
+			</div>
+			<div id="modal-container"></div>
 		</div>
 	</div>
 }
 
+templ ExperienceTable(experience []models.Experience) {
+	<div
+		class="bg-gray-900 border border-gray-800
+		       rounded-xl overflow-hidden"
+	>
+		<table class="w-full">
+			<thead>
+				<tr class="border-b border-gray-800">
+					<th class="table-header">
+						Title
+					</th>
+					<th class="table-header">
+						Company
+					</th>
+					<th class="table-header">
+						Description
+					</th>
+					<th class="table-header">
+						Start Date
+					</th>
+					<th class="table-header">
+						End Date
+					</th>
+					<th class="table-header text-right">
+						Actions	
+					</th>
 
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-800">
+				for _, e := range experience {
+					<tr class="hover:bg-gray-800/50 transition-colors">
+						<td class="px-6 py-4 font-medium">
+							{ e.Title }
+						</td>
+						<td class="px-6 py-4 font-medium">
+							{ e.Company }
+						</td>
+						<td
+							class="px-6 py-4 text-gray-400
+								text-sm max-w-xs truncate"
+						>
+							{ e.Description }
+						</td>
+						<td class="px-6 py-4">
+							{ e.StartDate }
+						</td>
+						<td class="px-6 py-4">
+							if e.EndDate != "" { 
+								{ e.EndDate }
+							} else {
+								Current
+							}
+						</td>
+						<td class="text-right">
+							<div>
+								<button
+									hx-get={
+										fmt.Sprintf(
+											"/admin/experience/%d/edit",
+											e.ID,
+										)
+									}
+									hx-target="#modal-container"
+									hx-swap="innerHTML"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-gray-700
+									       hover:bg-gray-600
+									       rounded-md
+									       transition-colors"
+								>
+									Edit
+								</button>
+								<button
+									hx-delete={
+										fmt.Sprintf(
+											"/admin/experience/%d",
+											e.ID,
+										)
+									}
+									hx-confirm={
+										fmt.Sprintf(
+											"Delete \"%s\"?",
+											e.Title,
+										)
+									}
+									hx-swap="none"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-red-900/50
+									       hover:bg-red-800
+									       text-red-300
+									       rounded-md
+									       transition-colors"
+								>
+									Delete
+								</button>
+							</div>
+						</td>
+					</tr>
+				}
+				if len(experience) == 0 {
+					<tr>
+						<td
+							colspan="4"
+							class="px-6 py-12 text-center
+							       text-gray-500"
+						>
+							No Experience yet. Add your first one!
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
 
+templ ExperienceForm(experience *models.Experience) {
+	<div
+		class="fixed inset-0 bg-black/60 flex items-center
+		       justify-center z-50"
+		id="experience-modal"
+	>
+		<div
+			class="bg-gray-900 border border-gray-800
+			       rounded-2xl w-full max-w-2xl p-6 mx-4
+			       max-h-[90vh] overflow-y-auto"
+		>
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-lg font-bold">
+					if experience != nil {
+						Edit Experience
+					} else {
+						New Experience
+					}
+				</h3>
+				<button
+					onclick="document.getElementById('experience-modal').remove()"
+					class="text-gray-500 hover:text-white
+					       transition-colors"
+				>
+					✕
+				</button>
+			</div>
+
+			<form
+				if experience != nil {
+					hx-put={
+						fmt.Sprintf(
+							"/admin/experience/%d", experience.ID,
+						)
+					}
+				} else {
+					hx-post="/admin/experience"
+				}
+				hx-swap="none"
+				hx-on::after-request="document.getElementById('experience-modal')?.remove()"
+				class="space-y-4"
+			>
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Title
+					</label>
+					<input
+						type="text"
+						name="title"
+						if experience != nil {
+							value={ experience.Title }
+						}
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Company
+					</label>
+					<input
+						type="text"
+						name="company"
+						if experience != nil {
+							value={ experience.Company }
+						}
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Description
+					</label>
+					<textarea
+						name="description"
+						rows="4"
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					>
+						if experience != nil {
+							{ experience.Description }
+						}
+					</textarea>
+				</div>
+
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						Start Date
+					</label>
+					<input
+						type="date"
+						name="start_date"
+						if experience != nil {
+							value={ experience.StartDate }
+						}
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+
+				<div>
+					<label
+						class="block text-sm font-medium
+						       text-gray-400 mb-1"
+					>
+						End Date
+					</label>
+					<input
+						type="date"
+						name="end_date"
+						if experience != nil {
+							value={ experience.EndDate }
+						}
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+				<div class="flex justify-end gap-3 pt-2">
+					<button
+						type="button"
+						onclick="document.getElementById('experience-modal').remove()"
+						class="px-4 py-2 bg-gray-700
+						       hover:bg-gray-600
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						class="px-4 py-2 bg-emerald-600
+						       hover:bg-emerald-500
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>
+						if experience != nil {
+							Update
+						} else {
+							Create
+						}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+// ── Education Admin ───────────────────────────────
+templ AdminEducationPage(education []models.Education) {
+	@AdminLayout("Education") {
+		@AdminEducationContent(education)
+	}
+}
+
+templ AdminEducationContent(education []models.Education) {
+	<div>
+		<div class="flex items-center justify-between mb-8">
+			<h2 class="text-2xl font-bold">Education</h2>
+			<button
+				hx-get="/admin/education/new"
+				hx-target="#modal-container"
+				hx-swap="innerHTML"
+				class="px-4 py-2 bg-emerald-600
+				       hover:bg-emerald-500 rounded-lg
+				       text-sm font-medium
+				       transition-colors"
+			>+ Add Education</button>
+		</div>
+		<div
+			id="education-table"
+			hx-get="/admin/education/table"
+			hx-trigger="refreshEducation from:body"
+			hx-swap="innerHTML"
+		>
+			@EducationTable(education)
+		</div>
+		<div id="modal-container"></div>
+	</div>
+}
+
+templ EducationTable(education []models.Education) {
+	<div class="bg-gray-900 border border-gray-800
+	       rounded-xl overflow-hidden">
+		<table class="w-full">
+			<thead>
+				<tr class="border-b border-gray-800">
+					<th class="table-header">Degree</th>
+					<th class="table-header">College</th>
+					<th class="table-header">GPA</th>
+					<th class="table-header">Status</th>
+					<th class="table-header text-right">Actions</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-800">
+				for _, e := range education {
+					<tr class="hover:bg-gray-800/50 transition-colors">
+						<td class="px-6 py-4 font-medium">
+							{ e.Degree }
+						</td>
+						<td class="px-6 py-4 text-gray-400 text-sm">
+							{ e.College }
+						</td>
+						<td class="px-6 py-4 text-gray-400 text-sm">
+							{ fmt.Sprintf("%.2f", e.Gpa) }
+						</td>
+						<td class="px-6 py-4">
+							if e.In_progress {
+								<span class="inline-flex items-center
+								       px-2.5 py-0.5 rounded-full
+								       text-xs font-medium
+								       bg-emerald-900/50
+								       text-emerald-300">
+									In Progress
+								</span>
+							} else {
+								<span class="inline-flex items-center
+								       px-2.5 py-0.5 rounded-full
+								       text-xs font-medium
+								       bg-gray-700
+								       text-gray-300">
+									Completed
+								</span>
+							}
+						</td>
+						<td class="px-6 py-4 text-right">
+							<div class="flex items-center
+							       justify-end gap-2">
+								<button
+									hx-get={ fmt.Sprintf(
+										"/admin/education/%d/edit",
+										e.ID,
+									) }
+									hx-target="#modal-container"
+									hx-swap="innerHTML"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-gray-700
+									       hover:bg-gray-600
+									       rounded-md
+									       transition-colors"
+								>Edit</button>
+								<button
+									hx-delete={ fmt.Sprintf(
+										"/admin/education/%d",
+										e.ID,
+									) }
+									hx-confirm={ fmt.Sprintf(
+										"Delete \"%s\"?",
+										e.Degree,
+									) }
+									hx-swap="none"
+									class="px-3 py-1.5
+									       text-xs
+									       bg-red-900/50
+									       hover:bg-red-800
+									       text-red-300
+									       rounded-md
+									       transition-colors"
+								>Delete</button>
+							</div>
+						</td>
+					</tr>
+				}
+				if len(education) == 0 {
+					<tr>
+						<td
+							colspan="5"
+							class="px-6 py-12 text-center
+							       text-gray-500"
+						>No education yet. Add your first one!</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ EducationForm(education *models.Education) {
+	<div
+		class="fixed inset-0 bg-black/60 flex items-center
+		       justify-center z-50"
+		id="education-modal"
+	>
+		<div class="bg-gray-900 border border-gray-800
+		       rounded-2xl w-full max-w-lg p-6 mx-4">
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-lg font-bold">
+					if education != nil {
+						Edit Education
+					} else {
+						New Education
+					}
+				</h3>
+				<button
+					onclick="document.getElementById('education-modal').remove()"
+					class="text-gray-500 hover:text-white
+					       transition-colors"
+				>✕</button>
+			</div>
+			<form
+				if education != nil {
+					hx-put={ fmt.Sprintf(
+						"/admin/education/%d", education.ID,
+					) }
+				} else {
+					hx-post="/admin/education"
+				}
+				hx-swap="none"
+				hx-on::after-request="document.getElementById('education-modal')?.remove()"
+				class="space-y-4"
+			>
+				<div>
+					<label class="block text-sm font-medium
+					       text-gray-400 mb-1">Degree</label>
+					<input
+						type="text"
+						name="degree"
+						if education != nil {
+							value={ education.Degree }
+						}
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+				<div>
+					<label class="block text-sm font-medium
+					       text-gray-400 mb-1">College</label>
+					<input
+						type="text"
+						name="college"
+						if education != nil {
+							value={ education.College }
+						}
+						required
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+				<div>
+					<label class="block text-sm font-medium
+					       text-gray-400 mb-1">GPA</label>
+					<input
+						type="number"
+						name="gpa"
+						step="0.01"
+						min="0"
+						max="4.0"
+						if education != nil {
+							value={ fmt.Sprintf("%.2f", education.Gpa) }
+						} else {
+							value="0.00"
+						}
+						class="w-full bg-gray-800 border
+						       border-gray-700 rounded-lg
+						       px-4 py-2.5 text-white
+						       focus:outline-none
+						       focus:ring-2
+						       focus:ring-indigo-500"
+					/>
+				</div>
+				<div>
+					<label class="flex items-center gap-3
+					       cursor-pointer">
+						<input
+							type="checkbox"
+							name="in_progress"
+							value="true"
+							if education != nil && education.In_progress {
+								checked
+							}
+							class="rounded border-gray-600
+							       bg-gray-700
+							       text-indigo-500
+							       focus:ring-indigo-500"
+						/>
+						<span class="text-sm text-gray-300">
+							Currently in progress
+						</span>
+					</label>
+				</div>
+				<div class="flex justify-end gap-3 pt-2">
+					<button
+						type="button"
+						onclick="document.getElementById('education-modal').remove()"
+						class="px-4 py-2 bg-gray-700
+						       hover:bg-gray-600
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>Cancel</button>
+					<button
+						type="submit"
+						class="px-4 py-2 bg-emerald-600
+						       hover:bg-emerald-500
+						       rounded-lg text-sm
+						       font-medium
+						       transition-colors"
+					>
+						if education != nil {
+							Update
+						} else {
+							Create
+						}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
 
 
 
