@@ -31,7 +31,7 @@ templ ProjectsContent(projects []ProjectWithSkills) {
 		}
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="projects-grid">
 			for _, pw := range projects {
-				@ProjectCardExpanded(pw)
+				@ProjectCard(pw)
 			}
 		</div>
 	</section>
