@@ -175,6 +175,9 @@ templ SkillListWithDetail(skills []models.Skill) {
 					hx-get={ fmt.Sprintf("/api/skills/%d", skill.ID) }
 					hx-target="#skill-detail"
 					hx-swap="innerHTML"
+					if i == 0 {
+						hx-trigger="load, click"
+					}
 					onclick="document.querySelectorAll('#skill-list button').forEach(b => { b.classList.remove('bg-purple-600','text-white'); b.classList.add('bg-gray-800','hover:bg-gray-700','text-gray-300'); }); this.classList.remove('bg-gray-800','hover:bg-gray-700','text-gray-300'); this.classList.add('bg-purple-600','text-white');"
 				>
 					{ skill.Name }
